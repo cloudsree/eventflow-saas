@@ -1,0 +1,3 @@
+import { NextResponse } from "next/server"; import { db } from "@/lib/db"; import { guestSchema } from "@/lib/validations";
+export async function GET(_:Request,{params}:{params:{eventId:string}}){return NextResponse.json(await db.guest.findMany({where:{eventId:params.eventId}}))}
+export async function POST(req:Request,{params}:{params:{eventId:string}}){const data=guestSchema.parse(await req.json());const guest=await db.guest.create({data:{eventId:params.eventId,firstName:data.firstName,lastName:data.lastName,email:data.email||null,phone:data.phone,mealPreference:data.mealPreference}});return NextResponse.json(guest,{status:201})}

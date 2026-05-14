@@ -1,0 +1,3 @@
+import { NextResponse } from "next/server"; import { db } from "@/lib/db";
+export async function GET(_:Request,{params}:{params:{eventId:string}}){return NextResponse.json(await db.scheduleItem.findMany({where:{eventId:params.eventId},orderBy:{startTime:"asc"}}))}
+export async function POST(req:Request,{params}:{params:{eventId:string}}){const b=await req.json();const item=await db.scheduleItem.create({data:{eventId:params.eventId,title:b.title,startTime:new Date(b.startTime),endTime:b.endTime?new Date(b.endTime):undefined,location:b.location,visibility:b.visibility||"INTERNAL"}});return NextResponse.json(item,{status:201})}

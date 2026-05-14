@@ -1,0 +1,3 @@
+import { NextResponse } from "next/server"; import { db } from "@/lib/db"; import { getCurrentMembership } from "@/lib/auth";
+export async function GET(_:Request,{params}:{params:{eventId:string}}){return NextResponse.json(await db.vendor.findMany({where:{eventId:params.eventId}}))}
+export async function POST(req:Request,{params}:{params:{eventId:string}}){const m=await getCurrentMembership();const b=await req.json();const vendor=await db.vendor.create({data:{organizationId:m.organizationId,eventId:params.eventId,name:b.name,category:b.category||"OTHER",email:b.email,contactName:b.contactName}});return NextResponse.json(vendor,{status:201})}

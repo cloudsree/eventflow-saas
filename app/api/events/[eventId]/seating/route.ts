@@ -1,0 +1,3 @@
+import { NextResponse } from "next/server"; import { db } from "@/lib/db";
+export async function GET(_:Request,{params}:{params:{eventId:string}}){return NextResponse.json(await db.seatingTable.findMany({where:{eventId:params.eventId},include:{seats:{include:{guest:true}}}}))}
+export async function POST(req:Request,{params}:{params:{eventId:string}}){const b=await req.json();const capacity=Number(b.capacity||8);const table=await db.seatingTable.create({data:{eventId:params.eventId,name:b.name,capacity}});await db.seat.createMany({data:Array.from({length:capacity},(_,i)=>({tableId:table.id,seatNumber:i+1}))});return NextResponse.json(table,{status:201})}

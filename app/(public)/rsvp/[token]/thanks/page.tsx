@@ -1,0 +1,1 @@
+export default function ThanksPage(){return <main className="mx-auto max-w-xl px-6 py-16"><div className="rounded-2xl border bg-white p-6 text-center shadow-sm"><h1 className="text-3xl font-bold">Thank you!</h1><p className="mt-2 text-slate-600">Your RSVP has been saved.</p></div></main>}
