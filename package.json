@@ -2,13 +2,13 @@
   "name": "eventflow-saas",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "prisma generate && next build --webpack",
-    "start": "next start",
-    "lint": "next lint",
-    "postinstall": "prisma generate"
-  },
+ "scripts": {
+  "dev": "next dev",
+  "build": "prisma generate && next build --webpack",
+  "start": "next start -H 0.0.0.0 -p 3000",
+  "lint": "next lint",
+  "postinstall": "prisma generate"
+},
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "6.16.0",
