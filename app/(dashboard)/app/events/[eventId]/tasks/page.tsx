@@ -1,2 +1,42 @@
-import { db } from "@/lib/db"; import { addTask, setTaskDone } from "@/features/tasks/actions";
-export default async function TasksPage({params}:{params:{eventId:string}}){const tasks=await db.task.findMany({where:{eventId:params.eventId},orderBy:{createdAt:"desc"}});return <div><h1 className="text-3xl font-bold">Tasks</h1><form action={addTask.bind(null,params.eventId)} className="mt-6 flex gap-3 rounded-2xl border bg-white p-4"><input name="title" placeholder="Task title" className="flex-1 rounded-lg border p-2" required/><select name="priority" className="rounded-lg border p-2"><option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>URGENT</option></select><button className="rounded-lg bg-slate-950 px-4 py-2 text-white">Add</button></form><div className="mt-6 grid gap-3">{tasks.map(t=><div key={t.id} className="flex items-center justify-between rounded-2xl border bg-white p-4"><div><h2 className="font-semibold">{t.title}</h2><p className="text-sm text-slate-500">{t.priority} - {t.status}</p></div>{t.status!=="DONE"&&<form action={setTaskDone.bind(null,t.id,params.eventId)}><button className="rounded-lg border px-3 py-2">Mark done</button></form>}</div>)}</div></div>}
+import { db } from "@/lib/db";
+
+export default async function TasksPage({
+  params,
+}: {
+  params: Promise<{ eventId: string }>;
+}) {
+  const { eventId } = await params;
+
+  const tasks = await db.task.findMany({
+    where: { eventId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return (
+    <div>
+      <h1 className="text-3xl font-bold">Tasks</h1>
+      <p className="text-gray-500">Track planning tasks and progress.</p>
+
+      <div className="mt-6 grid gap-3">
+        {tasks.map((task: any) => (
+          <div
+            key={task.id}
+            className="flex items-center justify-between rounded-2xl border bg-white p-4"
+          >
+            <div>
+              <div className="font-semibold">{task.title}</div>
+              <div className="text-sm text-gray-500">
+                {task.description || "No description"}
+              </div>
+            </div>
+
+            <div className="text-right">
+              <div className="text-sm font-medium">{task.status}</div>
+              <div className="text-xs text-gray-500">{task.priority}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

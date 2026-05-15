@@ -1,2 +1,33 @@
 import { db } from "@/lib/db";
-export default async function MessagesPage({params}:{params:{eventId:string}}){const messages=await db.message.findMany({where:{eventId:params.eventId},orderBy:{createdAt:"desc"}});return <div><h1 className="text-3xl font-bold">Messages</h1><div className="mt-6 rounded-2xl border bg-white p-5"><h2 className="font-semibold">Composer placeholder</h2><p className="mt-2 text-slate-600">Connect Resend/Twilio and add a background job runner before sending production reminders.</p></div><div className="mt-6 grid gap-3">{messages.map(m=><div key={m.id} className="rounded-2xl border bg-white p-4"><p className="text-sm text-slate-500">{m.channel}</p><h2 className="font-semibold">{m.subject}</h2><p>{m.body}</p></div>)}</div></div>}
+
+export default async function MessagesPage({
+  params,
+}: {
+  params: Promise<{ eventId: string }>;
+}) {
+  const { eventId } = await params;
+
+  const messages = await db.message.findMany({
+    where: { eventId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return (
+    <div>
+      <h1 className="text-3xl font-bold">Messages</h1>
+      <p className="text-gray-500">Review event messages and reminders.</p>
+
+      <div className="mt-6 grid gap-3">
+        {messages.map((message: any) => (
+          <div key={message.id} className="rounded-2xl border bg-white p-4">
+            <div className="font-semibold">
+              {message.subject || "Untitled message"}
+            </div>
+            <div className="text-sm text-gray-500">{message.channel}</div>
+            <p className="mt-2 text-sm">{message.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

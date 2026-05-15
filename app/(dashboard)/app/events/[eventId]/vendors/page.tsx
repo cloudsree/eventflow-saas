@@ -1,2 +1,40 @@
-import { db } from "@/lib/db"; import { addVendor } from "@/features/vendors/actions";
-export default async function VendorsPage({params}:{params:{eventId:string}}){const vendors=await db.vendor.findMany({where:{eventId:params.eventId}});return <div><h1 className="text-3xl font-bold">Vendors</h1><form action={addVendor.bind(null,params.eventId)} className="mt-6 grid gap-3 rounded-2xl border bg-white p-4 md:grid-cols-5"><input name="name" placeholder="Vendor" className="rounded-lg border p-2" required/><select name="category" className="rounded-lg border p-2"><option>VENUE</option><option>CATERING</option><option>PHOTOGRAPHY</option><option>MUSIC</option><option>OTHER</option></select><input name="contactName" placeholder="Contact" className="rounded-lg border p-2"/><input name="email" placeholder="Email" className="rounded-lg border p-2"/><button className="rounded-lg bg-slate-950 px-4 py-2 text-white">Add</button></form><div className="mt-6 grid gap-4 md:grid-cols-3">{vendors.map(v=><div key={v.id} className="rounded-2xl border bg-white p-5"><p className="text-sm text-slate-500">{v.category}</p><h2 className="text-xl font-semibold">{v.name}</h2><p>{v.contactName}</p><p className="text-slate-500">{v.email}</p><p className="mt-3 text-sm">{v.paymentStatus}</p></div>)}</div></div>}
+import { db } from "@/lib/db";
+
+export default async function VendorsPage({
+  params,
+}: {
+  params: Promise<{ eventId: string }>;
+}) {
+  const { eventId } = await params;
+
+  const vendors = await db.vendor.findMany({
+    where: { eventId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return (
+    <div>
+      <h1 className="text-3xl font-bold">Vendors</h1>
+      <p className="text-gray-500">Manage event vendors and contacts.</p>
+
+      <div className="mt-6 grid gap-4 md:grid-cols-3">
+        {vendors.map((vendor: any) => (
+          <div key={vendor.id} className="rounded-2xl border bg-white p-4">
+            <div className="font-semibold">{vendor.name}</div>
+            <div className="text-sm text-gray-500">{vendor.category}</div>
+
+            <div className="mt-3 space-y-1 text-sm">
+              <div>{vendor.contactName || "No contact name"}</div>
+              <div>{vendor.email || "No email"}</div>
+              <div>{vendor.phone || "No phone"}</div>
+            </div>
+
+            {vendor.notes ? (
+              <p className="mt-3 text-sm text-gray-600">{vendor.notes}</p>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

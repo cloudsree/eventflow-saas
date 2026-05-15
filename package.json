@@ -1,1 +1,44 @@
-{"name":"eventflow-saas","version":"0.1.0","private":true,"scripts":{"dev":"next dev","build":"next build","start":"next start","lint":"next lint","prisma:generate":"prisma generate","prisma:migrate":"prisma migrate dev","prisma:studio":"prisma studio","seed":"tsx prisma/seed.ts"},"dependencies":{"@prisma/client":"latest","@radix-ui/react-dialog":"latest","@radix-ui/react-dropdown-menu":"latest","@radix-ui/react-label":"latest","@radix-ui/react-select":"latest","@radix-ui/react-slot":"latest","@radix-ui/react-tabs":"latest","class-variance-authority":"latest","clsx":"latest","date-fns":"latest","lucide-react":"latest","next":"latest","next-auth":"latest","react":"latest","react-dom":"latest","react-hook-form":"latest","recharts":"latest","tailwind-merge":"latest","zod":"latest"},"devDependencies":{"@types/node":"latest","@types/react":"latest","@types/react-dom":"latest","autoprefixer":"^10.4.20","eslint":"latest","eslint-config-next":"latest","postcss":"^8.4.49","prisma":"latest","tailwindcss":"^3.4.17","tsx":"latest","typescript":"latest"}}
+{
+  "name": "eventflow-saas",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build --webpack",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "@prisma/client": "6.16.0",
+    "@radix-ui/react-dialog": "^1.1.1",
+    "@radix-ui/react-dropdown-menu": "^2.1.1",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-select": "^2.1.1",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-tabs": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.453.0",
+    "next": "16.2.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.53.0",
+    "tailwind-merge": "^2.5.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "autoprefixer": "10.4.20",
+    "eslint": "^9.12.0",
+    "eslint-config-next": "16.2.6",
+    "postcss": "8.4.49",
+    "prisma": "6.16.0",
+    "tailwindcss": "3.4.17",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,2 +1,41 @@
-import { db } from "@/lib/db"; import { addScheduleItem } from "@/features/schedule/actions";
-export default async function SchedulePage({params}:{params:{eventId:string}}){const items=await db.scheduleItem.findMany({where:{eventId:params.eventId},orderBy:{startTime:"asc"}});return <div><h1 className="text-3xl font-bold">Schedule</h1><form action={addScheduleItem.bind(null,params.eventId)} className="mt-6 grid gap-3 rounded-2xl border bg-white p-4 md:grid-cols-5"><input name="title" placeholder="Title" className="rounded-lg border p-2" required/><input name="startTime" type="datetime-local" className="rounded-lg border p-2" required/><input name="endTime" type="datetime-local" className="rounded-lg border p-2"/><input name="location" placeholder="Location" className="rounded-lg border p-2"/><button className="rounded-lg bg-slate-950 px-4 py-2 text-white">Add</button></form><div className="mt-6 grid gap-3">{items.map(i=><div key={i.id} className="rounded-2xl border bg-white p-4"><p className="text-sm text-slate-500">{i.startTime.toLocaleString()} {i.endTime?`- ${i.endTime.toLocaleString()}`:""}</p><h2 className="text-lg font-semibold">{i.title}</h2><p>{i.location}</p></div>)}</div></div>}
+import { db } from "@/lib/db";
+
+export default async function SchedulePage({
+  params,
+}: {
+  params: Promise<{ eventId: string }>;
+}) {
+  const { eventId } = await params;
+
+  const items = await db.scheduleItem.findMany({
+    where: { eventId },
+    orderBy: { startTime: "asc" },
+  });
+
+  return (
+    <div>
+      <h1 className="text-3xl font-bold">Schedule</h1>
+      <p className="text-gray-500">Manage event timeline and agenda.</p>
+
+      <div className="mt-6 grid gap-3">
+        {items.map((item: any) => (
+          <div key={item.id} className="rounded-2xl border bg-white p-4">
+            <div className="font-semibold">{item.title}</div>
+            <div className="text-sm text-gray-500">
+              {new Date(item.startTime).toLocaleString()}
+              {item.endTime
+                ? ` - ${new Date(item.endTime).toLocaleString()}`
+                : ""}
+            </div>
+            {item.location ? (
+              <div className="mt-1 text-sm">{item.location}</div>
+            ) : null}
+            {item.description ? (
+              <p className="mt-2 text-sm text-gray-600">{item.description}</p>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

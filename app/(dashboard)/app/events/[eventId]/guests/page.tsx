@@ -1,3 +1,51 @@
 import { db } from "@/lib/db";
-import { addGuest } from "@/features/guests/actions";
-export default async function GuestsPage({params}:{params:{eventId:string}}){const guests=await db.guest.findMany({where:{eventId:params.eventId},orderBy:{createdAt:"desc"}});return <div><h1 className="text-3xl font-bold">Guests</h1><form action={addGuest.bind(null,params.eventId)} className="mt-6 grid gap-3 rounded-2xl border bg-white p-4 md:grid-cols-5"><input name="firstName" placeholder="First name" className="rounded-lg border p-2" required/><input name="lastName" placeholder="Last name" className="rounded-lg border p-2"/><input name="email" placeholder="Email" className="rounded-lg border p-2"/><input name="mealPreference" placeholder="Meal" className="rounded-lg border p-2"/><button className="rounded-lg bg-slate-950 px-4 py-2 text-white">Add</button></form><div className="mt-6 overflow-hidden rounded-2xl border bg-white"><table className="w-full text-left text-sm"><thead className="bg-slate-100"><tr><th className="p-3">Name</th><th>Email</th><th>RSVP</th><th>Meal</th><th>RSVP Link</th></tr></thead><tbody>{guests.map(g=><tr key={g.id} className="border-t"><td className="p-3">{g.firstName} {g.lastName}</td><td>{g.email}</td><td>{g.rsvpStatus}</td><td>{g.mealPreference}</td><td><a href={`/rsvp/${g.rsvpToken}`}>Open</a></td></tr>)}</tbody></table></div></div>}
+
+export default async function GuestsPage({
+  params,
+}: {
+  params: Promise<{ eventId: string }>;
+}) {
+  const { eventId } = await params;
+
+  const guests = await db.guest.findMany({
+    where: { eventId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Guests</h1>
+        <p className="text-gray-500">Manage guest list and RSVP status.</p>
+      </div>
+
+      <div className="rounded-lg border">
+        <table className="w-full text-sm">
+          <thead className="border-b bg-gray-50">
+            <tr>
+              <th className="p-3 text-left">Name</th>
+              <th className="p-3 text-left">Email</th>
+              <th className="p-3 text-left">Phone</th>
+              <th className="p-3 text-left">RSVP</th>
+              <th className="p-3 text-left">Meal</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {guests.map((guest: any) => (
+              <tr key={guest.id} className="border-b">
+                <td className="p-3">
+                  {guest.firstName} {guest.lastName}
+                </td>
+                <td className="p-3">{guest.email || "-"}</td>
+                <td className="p-3">{guest.phone || "-"}</td>
+                <td className="p-3">{guest.rsvpStatus}</td>
+                <td className="p-3">{guest.mealPreference || "-"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

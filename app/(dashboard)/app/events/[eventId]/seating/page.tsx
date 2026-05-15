@@ -1,2 +1,66 @@
-import { db } from "@/lib/db"; import { addTable, assignSeat } from "@/features/seating/actions";
-export default async function SeatingPage({params}:{params:{eventId:string}}){const [tables,guests]=await Promise.all([db.seatingTable.findMany({where:{eventId:params.eventId},include:{seats:{include:{guest:true},orderBy:{seatNumber:"asc"}}}}),db.guest.findMany({where:{eventId:params.eventId},orderBy:{firstName:"asc"}})]);return <div><h1 className="text-3xl font-bold">Seating</h1><form action={addTable.bind(null,params.eventId)} className="mt-6 flex gap-3 rounded-2xl border bg-white p-4"><input name="name" placeholder="Table name" className="rounded-lg border p-2" required/><input name="capacity" placeholder="Capacity" type="number" className="rounded-lg border p-2"/><button className="rounded-lg bg-slate-950 px-4 py-2 text-white">Add table</button></form><div className="mt-6 grid gap-4 md:grid-cols-2">{tables.map(t=><div key={t.id} className="rounded-2xl border bg-white p-5"><h2 className="text-xl font-semibold">{t.name}</h2><div className="mt-4 grid gap-2">{t.seats.map(s=><form key={s.id} action={assignSeat.bind(null,params.eventId,s.id)} className="flex items-center gap-2"><span className="w-16 text-sm">Seat {s.seatNumber}</span><select name="guestId" defaultValue={s.guestId||""} className="flex-1 rounded-lg border p-2"><option value="">Unassigned</option>{guests.map(g=><option key={g.id} value={g.id}>{g.firstName} {g.lastName}</option>)}</select><button className="rounded-lg border px-3 py-2">Save</button></form>)}</div></div>)}</div></div>}
+import { db } from "@/lib/db";
+
+export default async function SeatingPage({
+  params,
+}: {
+  params: Promise<{ eventId: string }>;
+}) {
+  const { eventId } = await params;
+
+  const tables = await db.seatingTable.findMany({
+    where: { eventId },
+    include: {
+      seats: {
+        include: {
+          guest: true,
+        },
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  return (
+    <div>
+      <h1 className="text-3xl font-bold">Seating</h1>
+      <p className="text-gray-500">Manage tables and seat assignments.</p>
+
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        {tables.map((table: any) => (
+          <div key={table.id} className="rounded-2xl border bg-white p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-semibold">{table.name}</div>
+                <div className="text-sm text-gray-500">
+                  Capacity: {table.capacity}
+                </div>
+              </div>
+              <div className="text-sm text-gray-500">{table.shape}</div>
+            </div>
+
+            <div className="mt-4 grid gap-2">
+              {table.seats?.length ? (
+                table.seats.map((seat: any) => (
+                  <div
+                    key={seat.id}
+                    className="rounded-lg border bg-gray-50 p-2 text-sm"
+                  >
+                    Seat {seat.seatNumber}:{" "}
+                    {seat.guest
+                      ? `${seat.guest.firstName} ${seat.guest.lastName || ""}`
+                      : "Unassigned"}
+                  </div>
+                ))
+              ) : (
+                <div className="text-sm text-gray-500">
+                  No seats assigned yet.
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

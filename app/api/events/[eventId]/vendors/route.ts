@@ -1,3 +1,49 @@
-import { NextResponse } from "next/server"; import { db } from "@/lib/db"; import { getCurrentMembership } from "@/lib/auth";
-export async function GET(_:Request,{params}:{params:{eventId:string}}){return NextResponse.json(await db.vendor.findMany({where:{eventId:params.eventId}}))}
-export async function POST(req:Request,{params}:{params:{eventId:string}}){const m=await getCurrentMembership();const b=await req.json();const vendor=await db.vendor.create({data:{organizationId:m.organizationId,eventId:params.eventId,name:b.name,category:b.category||"OTHER",email:b.email,contactName:b.contactName}});return NextResponse.json(vendor,{status:201})}
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
+
+export async function GET(
+  _: Request,
+  { params }: { params: Promise<{ eventId: string }> }
+) {
+  const { eventId } = await params;
+
+  return NextResponse.json(
+    await db.vendor.findMany({
+      where: { eventId },
+      orderBy: { createdAt: "desc" },
+    })
+  );
+}
+
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ eventId: string }> }
+) {
+  const { eventId } = await params;
+  const body = await req.json();
+
+  const event = await db.event.findUnique({
+    where: { id: eventId },
+    select: { organizationId: true },
+  });
+
+  if (!event) {
+    return NextResponse.json({ error: "Event not found" }, { status: 404 });
+  }
+
+  const vendor = await db.vendor.create({
+    data: {
+      organizationId: event.organizationId,
+      eventId,
+      name: body.name,
+      category: body.category || "OTHER",
+      contactName: body.contactName,
+      email: body.email,
+      phone: body.phone,
+      website: body.website,
+      notes: body.notes,
+    },
+  });
+
+  return NextResponse.json(vendor, { status: 201 });
+}
